@@ -19,10 +19,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -31,14 +27,6 @@ import org.lwjgl.opengl.Display;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.asset.AssetManager;
-import com.jme3.input.RawInputListener;
-import com.jme3.input.awt.AwtKeyInput;
-import com.jme3.input.event.JoyAxisEvent;
-import com.jme3.input.event.JoyButtonEvent;
-import com.jme3.input.event.KeyInputEvent;
-import com.jme3.input.event.MouseButtonEvent;
-import com.jme3.input.event.MouseMotionEvent;
-import com.jme3.input.event.TouchEvent;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.texture.Image;
@@ -54,7 +42,6 @@ import com.sun.javafx.embed.AbstractEvents;
 import com.sun.javafx.embed.EmbeddedSceneInterface;
 import com.sun.javafx.embed.EmbeddedStageInterface;
 import com.sun.javafx.embed.HostInterface;
-import com.sun.javafx.perf.PerformanceTracker;
 import com.sun.javafx.scene.SceneHelper;
 import com.sun.javafx.scene.SceneHelper.SceneAccessor;
 import com.sun.javafx.stage.EmbeddedWindow;
@@ -381,27 +368,6 @@ public class JmeFxContainer {
     }
     private char[] keyCharSet = new char[0xFF];
     private BitSet keyStateSet = new BitSet(0xFF);
-
-    int retrieveKeyState() {
-        int embedModifiers = 0;
-
-        if (this.keyStateSet.get(KeyEvent.VK_SHIFT)) {
-            embedModifiers |= AbstractEvents.MODIFIER_SHIFT;
-        }
-
-        if (this.keyStateSet.get(KeyEvent.VK_CONTROL)) {
-            embedModifiers |= AbstractEvents.MODIFIER_CONTROL;
-        }
-
-        if (this.keyStateSet.get(KeyEvent.VK_ALT)) {
-            embedModifiers |= AbstractEvents.MODIFIER_ALT;
-        }
-
-        if (this.keyStateSet.get(KeyEvent.VK_META)) {
-            embedModifiers |= AbstractEvents.MODIFIER_META;
-        }
-        return embedModifiers;
-    }
 
     Map<Window, PopupSnapper> snappers = new IdentityHashMap<>();
     List<PopupSnapper> activeSnappers = new CopyOnWriteArrayList<>();
