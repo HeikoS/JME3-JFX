@@ -18,21 +18,21 @@ public class Test extends SimpleApplication {
         this.flyCam.setDragToRotate(true);
         this.viewPort.setBackgroundColor(ColorRGBA.Red);
 
-        final GuiManager testguiManager = new GuiManager(this.guiNode, this.assetManager, this, false,
-                new ProtonCursorProvider(this, this.assetManager, this.inputManager));
-        /**
-         * 2d gui, use the default input provider
-         */
-        this.inputManager.addRawInputListener(testguiManager.getInputRedirector());
+		final GuiManager testguiManager = new GuiManager(this.guiNode, this.assetManager, this, false,
+				new ProtonCursorProvider(this, this.assetManager, this.inputManager));
+		/**
+		 * 2d gui, use the default input provider
+		 */
+		this.inputManager.addRawInputListener(testguiManager.getInputRedirector());
 
-        final FXMLHud testhud = new FXMLHud("com/jme3x/jfx/loading_screen.fxml");
-        testhud.precache();
-        testguiManager.attachHudAsync(testhud);
+		final FXMLHud testhud = new FXMLHud("com/jme3x/jfx/loading_screen.fxml");
+		testhud.precache();
+		testguiManager.attachHudAsync(testhud);
 
-        final FXMLWindow testwindow = new FXMLWindow("com/jme3x/jfx/loading_screen.fxml");
-        testwindow.precache();
-        testwindow.setTitleAsync("TestTitle");
-        testguiManager.attachHudAsync(testwindow);
+		final FXMLWindow testwindow = new FXMLWindow("com/jme3x/jfx/loading_screen.fxml");
+		testwindow.precache();
+		testwindow.setTitleAsync("TestTitle");
+		testguiManager.attachHudAsync(testwindow);
 
         Display.setResizable(true);
     }
