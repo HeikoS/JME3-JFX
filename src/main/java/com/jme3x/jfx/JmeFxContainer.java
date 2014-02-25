@@ -19,6 +19,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
@@ -368,6 +372,27 @@ public class JmeFxContainer {
     }
     private char[] keyCharSet = new char[0xFF];
     private BitSet keyStateSet = new BitSet(0xFF);
+
+    int retrieveKeyState() {
+        int embedModifiers = 0;
+
+        if (this.keyStateSet.get(KeyEvent.VK_SHIFT)) {
+            embedModifiers |= AbstractEvents.MODIFIER_SHIFT;
+        }
+
+        if (this.keyStateSet.get(KeyEvent.VK_CONTROL)) {
+            embedModifiers |= AbstractEvents.MODIFIER_CONTROL;
+        }
+
+        if (this.keyStateSet.get(KeyEvent.VK_ALT)) {
+            embedModifiers |= AbstractEvents.MODIFIER_ALT;
+        }
+
+        if (this.keyStateSet.get(KeyEvent.VK_META)) {
+            embedModifiers |= AbstractEvents.MODIFIER_META;
+        }
+        return embedModifiers;
+    }
 
     Map<Window, PopupSnapper> snappers = new IdentityHashMap<>();
     List<PopupSnapper> activeSnappers = new CopyOnWriteArrayList<>();

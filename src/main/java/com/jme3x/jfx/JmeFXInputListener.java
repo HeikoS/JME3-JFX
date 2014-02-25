@@ -4,6 +4,11 @@
  */
 package com.jme3x.jfx;
 
+import java.awt.event.KeyEvent;
+import java.util.BitSet;
+
+import org.lwjgl.opengl.Display;
+
 import com.jme3.input.RawInputListener;
 import com.jme3.input.awt.AwtKeyInput;
 import com.jme3.input.event.JoyAxisEvent;
@@ -13,214 +18,217 @@ import com.jme3.input.event.MouseButtonEvent;
 import com.jme3.input.event.MouseMotionEvent;
 import com.jme3.input.event.TouchEvent;
 import com.sun.javafx.embed.AbstractEvents;
-import java.awt.event.KeyEvent;
-import java.util.BitSet;
-import org.lwjgl.opengl.Display;
 
 /**
- *
+ * Converts JMEEvents to JFXEvents
+ * 
  * @author Heist
  */
 public class JmeFXInputListener implements RawInputListener {
 
-    JmeFxContainer jmeFxContainer;
-    private BitSet keyStateSet = new BitSet(0xFF);
-    private char[] keyCharSet = new char[0xFF];
+	JmeFxContainer	jmeFxContainer;
+	private BitSet	keyStateSet	= new BitSet(0xFF);
+	private char[]	keyCharSet	= new char[0xFF];
 
-    public JmeFXInputListener(JmeFxContainer listensOnContainer) {
-        jmeFxContainer = listensOnContainer;
-    }
+	public JmeFXInputListener(final JmeFxContainer listensOnContainer) {
+		this.jmeFxContainer = listensOnContainer;
+	}
 
-    ;
+	;
 
-    @Override
-    public void beginInput() {
-    }
+	@Override
+	public void beginInput() {
+	}
 
-    @Override
-    public void endInput() {
-    }
+	@Override
+	public void endInput() {
+	}
 
-    @Override
-    public void onJoyAxisEvent(final JoyAxisEvent evt) {
-    }
+	@Override
+	public void onJoyAxisEvent(final JoyAxisEvent evt) {
+	}
 
-    @Override
-    public void onJoyButtonEvent(final JoyButtonEvent evt) {
-    }
+	@Override
+	public void onJoyButtonEvent(final JoyButtonEvent evt) {
+	}
 
-    @Override
-    public void onMouseMotionEvent(final MouseMotionEvent evt) {
+	@Override
+	public void onMouseMotionEvent(final MouseMotionEvent evt) {
 
-        if (jmeFxContainer.scenePeer == null) {
-            return;
-        }
+		if (this.jmeFxContainer.scenePeer == null) {
+			return;
+		}
 
-        final int x = evt.getX();
-        final int y = (int) Math.round(jmeFxContainer.getScene().getHeight()) - evt.getY();
+		final int x = evt.getX();
+		final int y = (int) Math.round(this.jmeFxContainer.getScene().getHeight()) - evt.getY();
 
-        final boolean covered = jmeFxContainer.isCovered(x, y);
-        if (covered) {
-            evt.setConsumed();
-        }
+		final boolean covered = this.jmeFxContainer.isCovered(x, y);
+		if (covered) {
+			evt.setConsumed();
+		}
 
-        // not sure if should be grabbing focus on mouse motion event
-        // grabFocus();
+		// not sure if should be grabbing focus on mouse motion event
+		// grabFocus();
 
-        int type = AbstractEvents.MOUSEEVENT_MOVED;
-        int button = AbstractEvents.MOUSEEVENT_NONE_BUTTON;
+		int type = AbstractEvents.MOUSEEVENT_MOVED;
+		int button = AbstractEvents.MOUSEEVENT_NONE_BUTTON;
 
-        final int wheelRotation = (int) Math.round(evt.getDeltaWheel() / -120.0);
+		final int wheelRotation = (int) Math.round(evt.getDeltaWheel() / -120.0);
 
-        if (wheelRotation != 0) {
-            type = AbstractEvents.MOUSEEVENT_WHEEL;
-            button = AbstractEvents.MOUSEEVENT_NONE_BUTTON;
-        } else if (this.mouseButtonState[0]) {
-            type = AbstractEvents.MOUSEEVENT_DRAGGED;
-            button = AbstractEvents.MOUSEEVENT_PRIMARY_BUTTON;
-        } else if (this.mouseButtonState[1]) {
-            type = AbstractEvents.MOUSEEVENT_DRAGGED;
-            button = AbstractEvents.MOUSEEVENT_SECONDARY_BUTTON;
-        } else if (this.mouseButtonState[2]) {
-            type = AbstractEvents.MOUSEEVENT_DRAGGED;
-            button = AbstractEvents.MOUSEEVENT_MIDDLE_BUTTON;
-        }
+		if (wheelRotation != 0) {
+			type = AbstractEvents.MOUSEEVENT_WHEEL;
+			button = AbstractEvents.MOUSEEVENT_NONE_BUTTON;
+		} else if (this.mouseButtonState[0]) {
+			type = AbstractEvents.MOUSEEVENT_DRAGGED;
+			button = AbstractEvents.MOUSEEVENT_PRIMARY_BUTTON;
+		} else if (this.mouseButtonState[1]) {
+			type = AbstractEvents.MOUSEEVENT_DRAGGED;
+			button = AbstractEvents.MOUSEEVENT_SECONDARY_BUTTON;
+		} else if (this.mouseButtonState[2]) {
+			type = AbstractEvents.MOUSEEVENT_DRAGGED;
+			button = AbstractEvents.MOUSEEVENT_MIDDLE_BUTTON;
+		}
 
-        jmeFxContainer.scenePeer.mouseEvent(type, button, this.mouseButtonState[0], this.mouseButtonState[1],
-                this.mouseButtonState[2], x, y, Display.getX() + x, Display.getY() + y,
-                keyStateSet.get(KeyEvent.VK_SHIFT), keyStateSet.get(KeyEvent.VK_CONTROL),
-                keyStateSet.get(KeyEvent.VK_ALT), keyStateSet.get(KeyEvent.VK_META), wheelRotation, false);
-    }
-    boolean[] mouseButtonState = new boolean[3];
+		this.jmeFxContainer.scenePeer.mouseEvent(type, button, this.mouseButtonState[0], this.mouseButtonState[1],
+				this.mouseButtonState[2], x, y, Display.getX() + x, Display.getY() + y,
+				this.keyStateSet.get(KeyEvent.VK_SHIFT), this.keyStateSet.get(KeyEvent.VK_CONTROL),
+				this.keyStateSet.get(KeyEvent.VK_ALT), this.keyStateSet.get(KeyEvent.VK_META), wheelRotation, false);
+	}
 
-    @Override
-    public void onMouseButtonEvent(final MouseButtonEvent evt) {
+	boolean[]	mouseButtonState	= new boolean[3];
 
-        // TODO: Process events in separate thread ?
-        if (jmeFxContainer.scenePeer == null) {
-            return;
-        }
+	@Override
+	public void onMouseButtonEvent(final MouseButtonEvent evt) {
 
-        final int x = evt.getX();
-        final int y = (int) Math.round(jmeFxContainer.getScene().getHeight()) - evt.getY();
+		// TODO: Process events in separate thread ?
+		if (this.jmeFxContainer.scenePeer == null) {
+			return;
+		}
 
-        int button;
+		final int x = evt.getX();
+		final int y = (int) Math.round(this.jmeFxContainer.getScene().getHeight()) - evt.getY();
 
-        switch (evt.getButtonIndex()) {
-            case 0:
-                button = AbstractEvents.MOUSEEVENT_PRIMARY_BUTTON;
-                break;
-            case 1:
-                button = AbstractEvents.MOUSEEVENT_SECONDARY_BUTTON;
-                break;
-            case 2:
-                button = AbstractEvents.MOUSEEVENT_MIDDLE_BUTTON;
-                break;
-            default:
-                return;
-        }
+		int button;
 
-        this.mouseButtonState[evt.getButtonIndex()] = evt.isPressed();
+		switch (evt.getButtonIndex()) {
+		case 0:
+			button = AbstractEvents.MOUSEEVENT_PRIMARY_BUTTON;
+			break;
+		case 1:
+			button = AbstractEvents.MOUSEEVENT_SECONDARY_BUTTON;
+			break;
+		case 2:
+			button = AbstractEvents.MOUSEEVENT_MIDDLE_BUTTON;
+			break;
+		default:
+			return;
+		}
 
-        // seems that generating mouse release without corresponding mouse pressed is causing problems in Scene.ClickGenerator
+		this.mouseButtonState[evt.getButtonIndex()] = evt.isPressed();
 
-        final boolean covered = jmeFxContainer.isCovered(x, y);
-        if (!covered) {
-            jmeFxContainer.loseFocus();
-        } else {
-            evt.setConsumed();
-            jmeFxContainer.grabFocus();
-        }
+		// seems that generating mouse release without corresponding mouse pressed is causing problems in Scene.ClickGenerator
 
-        int type;
-        if (evt.isPressed()) {
-            type = AbstractEvents.MOUSEEVENT_PRESSED;
-        } else if (evt.isReleased()) {
-            type = AbstractEvents.MOUSEEVENT_RELEASED;
-            // and clicked ??
-        } else {
-            return;
-        }
+		final boolean covered = this.jmeFxContainer.isCovered(x, y);
+		if (!covered) {
+			this.jmeFxContainer.loseFocus();
+		} else {
+			evt.setConsumed();
+			this.jmeFxContainer.grabFocus();
+		}
 
-        jmeFxContainer.scenePeer.mouseEvent(type, button, this.mouseButtonState[0], this.mouseButtonState[1],
-                this.mouseButtonState[2], x, y, Display.getX() + x, Display.getY() + y,
-                keyStateSet.get(KeyEvent.VK_SHIFT), keyStateSet.get(KeyEvent.VK_CONTROL),
-                keyStateSet.get(KeyEvent.VK_ALT), keyStateSet.get(KeyEvent.VK_META), 0,
-                button == AbstractEvents.MOUSEEVENT_SECONDARY_BUTTON);
+		int type;
+		if (evt.isPressed()) {
+			type = AbstractEvents.MOUSEEVENT_PRESSED;
+		} else if (evt.isReleased()) {
+			type = AbstractEvents.MOUSEEVENT_RELEASED;
+			// and clicked ??
+		} else {
+			return;
+		}
 
-    }
+		this.jmeFxContainer.scenePeer.mouseEvent(type, button, this.mouseButtonState[0], this.mouseButtonState[1],
+				this.mouseButtonState[2], x, y, Display.getX() + x, Display.getY() + y,
+				this.keyStateSet.get(KeyEvent.VK_SHIFT), this.keyStateSet.get(KeyEvent.VK_CONTROL),
+				this.keyStateSet.get(KeyEvent.VK_ALT), this.keyStateSet.get(KeyEvent.VK_META), 0,
+				button == AbstractEvents.MOUSEEVENT_SECONDARY_BUTTON);
 
-    @Override
-    public void onKeyEvent(final KeyInputEvent evt) {
+	}
 
-        if (jmeFxContainer.scenePeer == null) {
-            return;
-        }
+	@Override
+	public void onKeyEvent(final KeyInputEvent evt) {
 
-        final char keyChar = evt.getKeyChar();
+		if (this.jmeFxContainer.scenePeer == null) {
+			return;
+		}
 
-        int fxKeycode = AwtKeyInput.convertJmeCode(evt.getKeyCode());
+		final char keyChar = evt.getKeyChar();
 
-        final int keyState = retrieveKeyState();
-        if (fxKeycode > keyCharSet.length) {
-            switch (keyChar) {
-                case '\\':
-                    fxKeycode = java.awt.event.KeyEvent.VK_BACK_SLASH;
-                    break;
-                default:
-                    return;
-            }
-        }
+		int fxKeycode = AwtKeyInput.convertJmeCode(evt.getKeyCode());
 
-        if (jmeFxContainer.focus) {
-            evt.setConsumed();
-        }
+		final int keyState = this.retrieveKeyState();
+		if (fxKeycode > this.keyCharSet.length) {
+			switch (keyChar) {
+			case '\\':
+				fxKeycode = java.awt.event.KeyEvent.VK_BACK_SLASH;
+				break;
+			default:
+				return;
+			}
+		}
 
-        if (evt.isRepeating()) {
-            final char x = keyCharSet[fxKeycode];
+		if (this.jmeFxContainer.focus) {
+			evt.setConsumed();
+		}
 
-            if (jmeFxContainer.focus) {
-                jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_TYPED, fxKeycode, new char[]{x}, keyState);
-            }
-        } else if (evt.isPressed()) {
-            keyCharSet[fxKeycode] = keyChar;
-            keyStateSet.set(fxKeycode);
-            if (jmeFxContainer.focus) {
-                jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_PRESSED, fxKeycode, new char[]{keyChar}, keyState);
-                jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_TYPED, fxKeycode, new char[]{keyChar}, keyState);
-            }
-        } else {
-            final char x = keyCharSet[fxKeycode];
-            keyStateSet.clear(fxKeycode);
-            if (jmeFxContainer.focus) {
-                jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_RELEASED, fxKeycode, new char[]{x}, keyState);
-            }
-        }
+		if (evt.isRepeating()) {
+			final char x = this.keyCharSet[fxKeycode];
 
-    }
+			if (this.jmeFxContainer.focus) {
+				this.jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_TYPED, fxKeycode, new char[] { x },
+						keyState);
+			}
+		} else if (evt.isPressed()) {
+			this.keyCharSet[fxKeycode] = keyChar;
+			this.keyStateSet.set(fxKeycode);
+			if (this.jmeFxContainer.focus) {
+				this.jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_PRESSED, fxKeycode,
+						new char[] { keyChar }, keyState);
+				this.jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_TYPED, fxKeycode,
+						new char[] { keyChar }, keyState);
+			}
+		} else {
+			final char x = this.keyCharSet[fxKeycode];
+			this.keyStateSet.clear(fxKeycode);
+			if (this.jmeFxContainer.focus) {
+				this.jmeFxContainer.scenePeer.keyEvent(AbstractEvents.KEYEVENT_RELEASED, fxKeycode, new char[] { x },
+						keyState);
+			}
+		}
 
-    @Override
-    public void onTouchEvent(final TouchEvent evt) {
-    }
+	}
 
-    public int retrieveKeyState() {
-        int embedModifiers = 0;
+	@Override
+	public void onTouchEvent(final TouchEvent evt) {
+	}
 
-        if (this.keyStateSet.get(KeyEvent.VK_SHIFT)) {
-            embedModifiers |= AbstractEvents.MODIFIER_SHIFT;
-        }
+	public int retrieveKeyState() {
+		int embedModifiers = 0;
 
-        if (this.keyStateSet.get(KeyEvent.VK_CONTROL)) {
-            embedModifiers |= AbstractEvents.MODIFIER_CONTROL;
-        }
+		if (this.keyStateSet.get(KeyEvent.VK_SHIFT)) {
+			embedModifiers |= AbstractEvents.MODIFIER_SHIFT;
+		}
 
-        if (this.keyStateSet.get(KeyEvent.VK_ALT)) {
-            embedModifiers |= AbstractEvents.MODIFIER_ALT;
-        }
+		if (this.keyStateSet.get(KeyEvent.VK_CONTROL)) {
+			embedModifiers |= AbstractEvents.MODIFIER_CONTROL;
+		}
 
-        if (this.keyStateSet.get(KeyEvent.VK_META)) {
-            embedModifiers |= AbstractEvents.MODIFIER_META;
-        }
-        return embedModifiers;
-    }
+		if (this.keyStateSet.get(KeyEvent.VK_ALT)) {
+			embedModifiers |= AbstractEvents.MODIFIER_ALT;
+		}
+
+		if (this.keyStateSet.get(KeyEvent.VK_META)) {
+			embedModifiers |= AbstractEvents.MODIFIER_META;
+		}
+		return embedModifiers;
+	}
 }

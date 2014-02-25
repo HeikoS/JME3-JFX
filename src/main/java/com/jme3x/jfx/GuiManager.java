@@ -16,7 +16,6 @@ import com.jme3.input.RawInputListener;
 import com.jme3.scene.Node;
 import com.jme3x.jfx.cursor.ICursorDisplayProvider;
 import com.sun.javafx.cursor.CursorType;
-import javafx.concurrent.Task;
 
 public class GuiManager {
 
@@ -30,11 +29,11 @@ public class GuiManager {
     private List<AbstractHud> attachedHuds = new CopyOnWriteArrayList<>();
 
     public Group getRootGroup() {
-        return highLevelGroup;
+        return this.highLevelGroup;
     }
 
     public JmeFxContainer getjmeFXContainer() {
-        return jmefx;
+        return this.jmefx;
 
     }
 
@@ -42,8 +41,8 @@ public class GuiManager {
      * creates a new JMEFX container, this is a rather expensive operation and
      * should only be done one time fr the 2d fullscreengui. Additionals should
      * only be necessary for 3d guis, should be called from JME thread
-     *
-     * @param guiParent
+     *     
+* @param guiParent
      * @param assetManager
      * @param application
      * @param fullscreen
@@ -57,21 +56,17 @@ public class GuiManager {
         for (final CursorType type : CursorType.values()) {
             cursorDisplayProvider.setup(type);
         }
-        initRootGroup();
+        this.initRootGroup();
 
     }
 
     private void initRootGroup() {
         /*
-         * 
-         Group baseHighLevelGroup = new Group();
-         Scene baseScene = new Scene(baseHighLevelGroup);
-         baseScene.setFill(new Color(0, 0, 0, 0));
-         switchRootGroup(baseHighLevelGroup);
-         }
-
-         private void switchRootGroup(Group newRootGroup) {
-         *          */
+         *
+         * Group baseHighLevelGroup = new Group(); Scene baseScene = new Scene(baseHighLevelGroup); baseScene.setFill(new Color(0, 0, 0, 0)); switchRootGroup(baseHighLevelGroup); }
+         *
+         * private void switchRootGroup(Group newRootGroup) {
+         */
         final Semaphore waitForInit = new Semaphore(0);
         Platform.runLater(new Runnable() {
             @Override
@@ -89,8 +84,8 @@ public class GuiManager {
     /**
      * bind your input suppliery here, for 2d the normal inputmanager will
      * suffice, Events are expected to be in the JME thread
-     *
-     * @return
+     *     
+* @return
      */
     public RawInputListener getInputRedirector() {
         return this.jmefx.inputListener;
@@ -99,15 +94,15 @@ public class GuiManager {
     /**
      * adds a hud, if this is not called in the jfx thread this is done async,
      * else it is done instantly
-     *
-     * @param hud
+     *     
+* @param hud
      */
     public void attachHudAsync(final AbstractHud hud) {
         if (!hud.isInitialized()) {
             System.err.println("Late init of " + hud.getClass().getName()
                     + " call initialize early to prevent microlags");
-            hud.initialize();
-            // TODO logger
+            hud.precache();
+// TODO logger
         }
 
         if (Platform.isFxApplicationThread()) {

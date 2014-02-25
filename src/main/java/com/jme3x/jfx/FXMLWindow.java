@@ -6,16 +6,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.layout.Region;
 
-public class TestWindow extends AbstractWindow {
+public class FXMLWindow<ControllerType> extends AbstractWindow {
+
+	private String			fxml;
+	private ControllerType	controller;
+
+	public FXMLWindow(final String fxml) {
+		this.fxml = fxml;
+	}
+
+	public ControllerType getController() {
+		return this.controller;
+	}
 
 	@Override
 	protected Region innerInit() throws Exception {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
-		final URL location = this.getClass().getResource("loading_screen.fxml");
+		final URL location = Thread.currentThread().getContextClassLoader().getResource(this.fxml);
 		fxmlLoader.setLocation(location);
 		fxmlLoader.setBuilderFactory(new JavaFXBuilderFactory());
-
-		return fxmlLoader.load(location.openStream());
+		final Region rv = fxmlLoader.load(location.openStream());
+		this.controller = fxmlLoader.getController();
+		return rv;
 	}
 
 	@Override
@@ -23,7 +35,6 @@ public class TestWindow extends AbstractWindow {
 		this.setEnforceMinimumSize(true);
 		this.setEnforceMaximumSize(true);
 		this.setSize(600, 300);
-
 	}
 
 }
